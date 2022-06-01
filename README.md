@@ -30,7 +30,7 @@ Once your scenario has been generated, it is time to move to the https://github.
 ### Getting A Scenario Running
 This section details the steps for taking the output of a generated scenario and getting it running in CloudLab:
 
-1. Clone https://github.com/ejbraun/cloudlab_seed_emulation.
+1. Clone https://github.com/KarlOlson/cloudlab_seed_emulation-linux.git.
 2. You can choose to either push straight to main or work off a branch. Either way, overwrite the existing containers folder w/ the newly generated folder from your recently compiled scenario and commit + push to the chosen branch.
 3. Navigate to https://www.cloudlab.us/show-project.php?project=Escra#profiles and select the profile titled `seed-emulation`. Alternatively (and recommended) is to build your own scenario in cloudlab using the git-clone in Step 1. This makes editing/changes much easier for experiment tweaks.
 4. In the column on the left side, click the `Edit` button.
