@@ -11,14 +11,14 @@ This section details the changes made to the seed emulator library:
 ___
 ### Scenario Flow
 This section details the steps for writing a scenario:
- 1. Clone https://github.com/ejbraun/seed-emulator-bgpchain.
- 2. Write the scenario you wish to test using the seed emulator libraries. There are many examples present in the `examples` directory.
- 3. Make sure to `source development.env` in the root level of the `seed-emulator-bgpchain`.
+ 1. Clone https://github.com/ejbraun/seed-emulator-bgpchain.git (note: this is almost the same as the seed security labs git but with a few key updates for Cloudlab.)
+ 2. Write the scenario you wish to test using the seed emulator libraries. There are many examples present in the `examples` directory. A good overview and basic setup/walkthrough of deployment can be found at: https://seedsecuritylabs.org/emulator/
+ 3. Make sure to `source development.env` in the root level of the `seed-emulator-bgpchain`. Alternatively, add the directory to the pythonpath:```export PYTHONPATH="`pwd`:$PYTHONPATH"```
  4. After rendering the emulation (`emu.render()`), call the following line to compile w/ the correct compiler for the CloudLab profile: `emu.compile(DistributedDocker(), "./containers")`.
  5. Run `python3 <scenario_name>.py` to render and compile the emulation.
- 6. Verify that the correct output files are generated and exist in `containers`. 
+ 6. Verify that the correct docker output files are generated and exist in `containers` for each node/device. 
 
-Once your scenario has been generated, it is time to move to the https://github.com/ejbraun/cloudlab_seed_emulation repository.
+Once your scenario has been generated, it is time to move to the https://github.com/KarlOlson/cloudlab_seed_emulation-linux.git repository.
 
 #### Note: Local Development
 1. Instead of `DistributedDocker` as your compiler in your scenario python file, use `Docker` (make sure to add corresponding import statement to top of file).
@@ -31,7 +31,7 @@ This section details the steps for taking the output of a generated scenario and
 
 1. Clone https://github.com/ejbraun/cloudlab_seed_emulation.
 2. You can choose to either push straight to main or work off a branch. Either way, overwrite the existing containers folder w/ the newly generated folder from your recently compiled scenario and commit + push to the chosen branch.
-3. Navigate to https://www.cloudlab.us/show-project.php?project=Escra#profiles and select the profile titled `seed-emulation`. 
+3. Navigate to https://www.cloudlab.us/show-project.php?project=Escra#profiles and select the profile titled `seed-emulation`. Alternatively (and recommended) is to build your own scenario in cloudlab using the git-clone in Step 1. This makes editing/changes much easier for experiment tweaks.
 4. In the column on the left side, click the `Edit` button.
 5.  In the `Repository` row, click on the `Update` button. This will prompt CloudLab to fetch the latest branches from the `cloudlab_seed_emulation` repository. 
 6. Find your selected branch's row in the bottom of the page and click the `Instantiate` button. 
@@ -44,6 +44,13 @@ This section details the steps for taking the output of a generated scenario and
 13. You can check the logs of the startup script w/ `cat start.log`.
 14. You can check status of swarm w/ `docker node ls`. You can check status of containers that are running *locally* on this given node w/ `docker ps`. Normal docker commands apply (`docker logs, docker network ls, ...`). 
 15. In order to check the status of all the services deployed remotely across the swarm, run `docker service ls`. 
+
+___
+### SETUP TWEAKS/Troubleshooting
+Typically the build script to set up cloudlab instances (managerSetUp.py) does not fully execute in one go. You will likely need to go through the following adjustments to get sim running:
+1: Check and verify if docker-compose has installed `sudo docker-compose`. You should get a list of options if it is installed. If not, run `sudo apt-get install docker-compose`. Once it has finished installing run ` chmod +x /usr/local/bin/docker-compose` followed by `sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose`. This should complete the install.
+2: check and verify if the docker swarm has launched correctly and all nodes have joined the swarm. First check by running: `docker node ls`. You should see all nodes in a joined status with a single manager node. If not, you may need to manually add the nodes to the swarm. Its likely they have some swarm configed that has failed, so you will need to first run `docker swarm leave --force` and then run the `docker swarm join-token manager` command. This will display the token and commands needed to join the swarm. Just copy and run on the worker nodes that have not yet joined (after leaving old/stale swarm)
+3. If all is well with 1 and 2, then you are free to finally run `deploy.sh` lab setup. Make sure you have execute privileges: `sudo chmod +x` and then run `./deploy.sh`. If all goes well, the node manager should deploy your instances across the workers. You should see all services deployed when you run `docker node ls`. 
 ___
 ### CloudLab Experiment Creation + Runtime Explained
 
