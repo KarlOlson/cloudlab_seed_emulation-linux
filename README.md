@@ -11,6 +11,7 @@ This section details the changes made to the seed emulator library:
 ___
 ### Scenario Flow
 This section details the steps for writing a scenario:
+
  1. Clone https://github.com/ejbraun/seed-emulator-bgpchain.git (note: this is almost the same as the seed security labs git but with a few key updates for Cloudlab.)
  2. Write the scenario you wish to test using the seed emulator libraries. There are many examples present in the `examples` directory. A good overview and basic setup/walkthrough of deployment can be found at: https://seedsecuritylabs.org/emulator/
  3. Make sure to `source development.env` in the root level of the `seed-emulator-bgpchain`. Alternatively, add the directory to the pythonpath:```export PYTHONPATH="`pwd`:$PYTHONPATH"```
@@ -48,8 +49,11 @@ This section details the steps for taking the output of a generated scenario and
 ___
 ### SETUP TWEAKS/Troubleshooting
 Typically the build script to set up cloudlab instances (managerSetUp.py) does not fully execute in one go. You will likely need to go through the following adjustments to get sim running:
+
 1: Check and verify if docker-compose has installed `sudo docker-compose`. You should get a list of options if it is installed. If not, run `sudo apt-get install docker-compose`. Once it has finished installing run ` chmod +x /usr/local/bin/docker-compose` followed by `sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose`. This should complete the install.
+
 2: check and verify if the docker swarm has launched correctly and all nodes have joined the swarm. First check by running: `docker node ls`. You should see all nodes in a joined status with a single manager node. If not, you may need to manually add the nodes to the swarm. Its likely they have some swarm configed that has failed, so you will need to first run `docker swarm leave --force` and then run the `docker swarm join-token manager` command. This will display the token and commands needed to join the swarm. Just copy and run on the worker nodes that have not yet joined (after leaving old/stale swarm)
+
 3. If all is well with 1 and 2, then you are free to finally run `deploy.sh` lab setup. Make sure you have execute privileges: `sudo chmod +x` and then run `./deploy.sh`. If all goes well, the node manager should deploy your instances across the workers. You should see all services deployed when you run `docker node ls`. 
 ___
 ### CloudLab Experiment Creation + Runtime Explained
